@@ -12,6 +12,8 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 ## Files:
 
-Part1US.qmd / Part2W.R: Perform the data analysis and clustering techniques on US and later world economy.
+Part1US.qmd: Performs the analysis of the US economy with interpretations of the results.
 
-Part2W.pdf: Contains the results and visualizations from the world economy analysis.
+Part2W.R: Perform the PCA and clustering techniques on many different countries.
+
+Part2W.pdf: Contains the results and visualizations from the world economy analysis with a brief explanation.
