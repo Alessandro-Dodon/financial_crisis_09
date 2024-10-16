@@ -4,14 +4,14 @@ This project explores the economic impact of financial crises on both the U.S. e
 
 ## Part 1: U.S. Economy Impact (Part1US)
 
-In this section, I analyze the economic impact of financial crises on the United States. The analysis includes:
+In this section, I analyze the economic impact of financial crises on the United States. The analysis includes web scraping, interactive visualizations and tables for extensive descriptive statistics and correlation matrix to analyze the relationship between macroeconomic indicators.
 
 ## Part 2: World Economy Impact (Part2W)
 
-In this section, the analysis extends to the world economy, using basic machine learning techniques and clustering methods to explore patterns and groupings in how different countries are affected by financial crises. The final output is a comprehensive report.
+In this section, the analysis extends to the world economy, using basic machine learning techniques (PCA and clustering methods) to explore patterns and groupings in how different countries are affected by financial crises. The final output is a comprehensive report.
 
 ## Files:
 
-Part1US.qmd / Part2W.R: Perform the data analysis and clustering techniques.
+Part1US.qmd / Part2W.R: Perform the data analysis and clustering techniques on US and later world economy.
 
 Part2W.pdf: Contains the results and visualizations from the world economy analysis.
