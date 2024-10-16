@@ -6,8 +6,6 @@ This project explores the economic impact of financial crises on both the U.S. e
 
 In this section, I analyze the economic impact of financial crises on the United States. The analysis includes:
 
-Quarto (.qmd) File: Document containing the analysis, outputs, and graphs showing the impact on key economic indicators in the U.S.
-
 ## Part 2: World Economy Impact (Part2W)
 
 In this section, the analysis extends to the world economy, using basic machine learning techniques and clustering methods to explore patterns and groupings in how different countries are affected by financial crises. The final output is a comprehensive report.
