@@ -1,0 +1,537 @@
+---
+title: "Economic Impact and Analysis of the 2007-2009 Financial Crisis"
+author: "Alessandro Dodon, alessandro.dodon@studio.unibo.it, 0001032158"
+format:
+  html:
+    self-contained: true
+editor: visual
+---
+
+## Introduction
+
+The interest in this particular phenomenon arises from the fact that up to this day to only consensus seems to be about the how destructive it was. The true causes remain somewhat unknown, furthermore very few predicted such an impact, and sadly they were not given the appropriate attention.\
+In this project I present an application of different Data Analysis techniques to quantify and describe the impact of the Financial Crises of 2007-2009, with a particular attention to the US.\
+In a more formal way, my main research questions are "How was the US economy effected by the crises?", and specifically "How did the macroeconomic and financial indicators change before, during and after this disaster?".\
+The datasets studied have been used for two different courses withing my EPOS program, "Programming Lab 2" and "Big Data in Social Sciences". In this first version, for the former, I am focusing more on the preliminary work, to understand the data with web-scraping, transformations and pre-processing, data quality inspection, visualizations, summary statistics and correlation analysis, all focusing on one particular country as previously said.\
+The second part, for the "Big Data in Social Sciences" course, will focus on a comparison of different clustering techniques to examine how global economies behaved during the peak year of the crises. Clearly some similarities are present, and this allowed me the gain a deeper understand on the phenomenon studied. However, the techniques implemented are different.
+
+The datasets for this analysis are sourced from the World Bank, known for its comprehensive and reliable global economic data. I have chosen a series of macroeconomic/ financial indicators based on macroeconomic theory, all quantitative, numerical and continuous in nature, each offering a unique lens through which to examine the effects of the Financial Crisis:
+
+1.  Broad money (% of GDP): Essential for understanding the relationship between money supply and GDP, indicating potential inflationary pressures.
+
+2.  Central government debt, total (% of GDP): A crucial measure of a government's fiscal health and sustainability.
+
+3.  Current account balance (BoP, current US\$): Reflects a country's net trade position, important for understanding its global economic interactions.
+
+4.  GDP growth (annual %): Shows the rate of economic expansion or contraction.
+
+5.  Gross capital formation (% of GDP): Indicates the level of investment in the economy, a key factor in future growth.
+
+6.  Gross savings (% of GDP): Reflects the portion of GDP available for future investment.
+
+7.  Inflation, consumer prices (annual %): An important measure of changes in purchasing power and monetary policy effectiveness.
+
+8.  Lending interest rate (%): Reveals the cost of borrowing, affecting consumer and business spending.
+
+9.  Market capitalization of listed domestic companies (% of GDP): Offers insights into investor sentiment and the stock market's relative size.
+
+10. Revenue, excluding grants (% of GDP): Measures government financial efficiency and funding capabilities.
+
+11. Foreign direct investment, net inflows (% of GDP): Indicates a country's attractiveness to foreign investors.
+
+12. Final consumption expenditure (% of GDP): Highlights the role of domestic consumption in the economy.
+
+13. Unemployment, total (% of total labor force) (national estimate): Measures the percentage of the labor force that is unemployed and actively seeking work, serving as a vital barometer of labor market health and economic activity.
+
+Each step of the analysis will be explained and the codes in this HTML format will be shown each time. The focus won't be so much about the "how" of each code, as the operations are not particularly complex, and a deeper look at the code itself can reveal that. Instead, I'll focus more on the "why" of each step, the thought process that there is behind it and the interpretations.\
+This work as said before greatly helped me in the second part of the project, as I was able to better understand some of the macroeconomic trends of the data I was working with.
+
+## Loading Libraries and Data
+
+I start by loading the libraries required for the analysis, which will give primary importance to the tidyverse package, one of the most common and powerful tools in R. Some other packages will be used primarily for reshaping, plotting and manipulating the data. A simple suppression of the warnings was adopted to ensure a clear output.\
+The datasets, were downloaded directly from the website <https://data.worldbank.org/indicator> (where the user can select each indicator from the search bar) in CSV format. Later they were unzipped and separated from the metadata. They were then simply loaded by inserting the working directory, and creating a data list.
+
+```{r}
+# Load Libraries and suppress warnings
+suppressWarnings(suppressMessages({
+  library(reshape2)
+  library(chromote)
+  library(car)
+  library(ggfortify)
+  library(plotly)
+  library(DT)
+  library(knitr)
+  library(kableExtra)
+  library(ggrepel)
+  library(Rtsne)
+  library(tidyverse)  # This will load readr, dplyr, tidyr, ggplot2 and some others
+}))
+
+# Reading the CSV files suppressing warnings
+suppressWarnings(suppressMessages({
+  file_path <- "C:/Users/aledo/OneDrive/Desktop/R_PROJECT_3 YEAR_PRO_2/Unzipped_data/"
+  files <- c(
+    "API_BN.CAB.XOKA.CD_DS2_en_csv_v2_5873206.csv",
+    "API_CM.MKT.LCAP.GD.ZS_DS2_en_csv_v2_5873240.csv",
+    "API_FP.CPI.TOTL.ZG_DS2_en_csv_v2_5871597.csv",
+    "API_GC.DOD.TOTL.GD.ZS_DS2_en_csv_v2_5872587.csv",
+    "API_NE.GDI.TOTL.ZS_DS2_en_csv_v2_5873774.csv",
+    "API_NY.GDP.MKTP.KD.ZG_DS2_en_csv_v2_5871639.csv",
+    "API_FM.LBL.BMNY.GD.ZS_DS2_en_csv_v2_5873493.csv",
+    "API_GC.REV.XGRT.GD.ZS_DS2_en_csv_v2_5873527.csv",
+    "API_NY.GNS.ICTR.ZS_DS2_en_csv_v2_5873909.csv",
+    "API_FR.INR.LEND_DS2_en_csv_v2_5873491.csv",
+    "API_BX.KLT.DINV.WD.GD.ZS_DS2_en_csv_v2_5994659.csv",
+    "API_SL.UEM.TOTL.NE.ZS_DS2_en_csv_v2_5996644.csv",
+    "API_NE.CON.TOTL.ZS_DS2_en_csv_v2_5995951.csv"
+  )
+  
+  data_list <- lapply(files, function(file) {
+    read_csv(paste0(file_path, file), skip = 3)
+  })
+}))
+```
+
+## Extracting GDP Growth Details from the World Bank with Web Scraping
+
+The first step of the analysis involved the use of web scraping to extract information about one of the most crucial indicators, GDP growth. In many cases, spending extra time to understand how the datasets themselves are "built" is a very good practice.
+
+While the rvest package in R is a standard tool for scraping static web content, it isn't equipped to handle dynamic content. Dynamic web pages, such as the World Bank's data portal, load content asynchronously and often require user interactions to display full data sets.
+
+To overcome this, I employed the chromote package.
+
+The process unfolded as follows:
+
+1.  Initiate Browser Session: A new browser session was initiated using ChromoteSession\$new().
+
+2.  Access Web Page: The browser navigated to the World Bank's page displaying the GDP growth chart.
+
+3.  Interact & Extract: After a brief pause to ensure the page had fully loaded, I clicked the "Details" button to access the dynamically loaded content.
+
+4.  Format & Display: Following the extraction, the data was formatted for clear presentation in the Quarto document, with the content organized into easily digestible sections.
+
+```{r}
+# # Start a browser session
+b <- ChromoteSession$new()
+
+# Navigate to the World Bank page
+b$Page$navigate("https://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG?view=chart")
+
+# Give the page some time to load
+Sys.sleep(5)  
+
+# Click the "Details" button using the selector
+b$Runtime$evaluate('document.querySelector("button.button.secondary.openinnew").click()')
+
+# Wait for the content to load after clicking the button
+Sys.sleep(5) 
+
+# Extract the details using the provided selector
+details_info <- b$Runtime$evaluate('document.querySelector("#modal > div > div > div > div").innerText')$result$value
+
+# Close the browser session
+b$close()
+
+# Formatting the output for Quarto
+# Split the content into sections
+sections <- unlist(strsplit(details_info, "\n\n"))
+
+cat("## Extracted Details\n\n")
+
+# Iterate over sections and print without title formatting
+for (section in sections) {
+  # Wrap the text to a width of 80 characters
+  wrapped_text <- paste(strwrap(section, width = 80), collapse="\n")
+  
+  # Print the wrapped text
+  cat(wrapped_text, "\n\n---\n\n")
+}
+```
+
+## Data Filtering and Reshaping
+
+Now I prepared the datasets focusing on the US primarily, filtering the data from 1990 to 2020. The transformation reshapes the data into a wide-format dataframe, each row representing a specific year and each column represents a different macroeconomic indicators. This format also aligns the data chronologically.
+
+The time period was selected according to a couple of principles. First, I saw that before year 1990 more and more missing values were present. Second, focusing on a period of 30 years, allows for a comprehensive view of the pre-crises and post-crises period, so the time series component of the data can be better visualized.
+
+Finally, I used the DT package to create an interactive data table, where the user can filter according to the years of interest, values of interest or use the search bar to find some particular values.
+
+```{r}
+# Define country of interest and years of interest
+country_of_interest <- "United States"
+years_of_interest <- 1990:2020
+
+# Filter, reshape, and combine the data list into one wide-format dataframe
+combined_data <- bind_rows(lapply(data_list, function(df) {
+  df %>%
+    filter(`Country Name` == country_of_interest) %>%
+    select(`Country Name`, `Country Code`, `Indicator Name`, all_of(as.character(years_of_interest)))
+})) %>%
+  pivot_longer(cols = as.character(years_of_interest), names_to = "Year", values_to = "Value") %>%
+  pivot_wider(names_from = `Indicator Name`, values_from = "Value", id_cols = "Year") %>%
+  mutate(Year = as.numeric(Year))  # Convert Year to numeric if it's not already
+
+# Create Interactive Data Table with DT
+datatable(combined_data, 
+          options = list(pageLength = 10, autoWidth = TRUE),
+          class = 'cell-border stripe', 
+          rownames = FALSE,
+          filter = 'top', 
+          caption = 'Data for Financial Indicators: 1990-2020')
+```
+
+## Data Quality and Pre-Processing
+
+Despite the fact that the data comes from a very reliable source, it's a good practice to examine the quality of the data with a series of simple checks. In this case I focused on detecting the outliers, duplicates and missing values.\
+The outliers were detected by using the IQR method. After also verifying that there are no duplicates and missing values, I generated a summary table that consolidates the key findings. By using kable and kable_styling the readability was further enhanced. A simple scroll-box was also created to the right of the table, so that the user can comfortably inspect the values for each indicator, while the titles are "frozen" and remain visible the entire time.
+
+For the outliers present, I displayed a separate table, which contains the specific indicator, year and value.\
+What is not surprising is that half of those values involve the Financial Crises to a great extend. GDP growth indeed was at an "all" time negative during 2009, arguably the worst year of the crises, recording a -2.59%. Gross savings also at 2009 are an outlier, recording another surprisingly low value, of 13.82%. The other two outliers are inflation during 1990 and, much more recently, GDP growth during 2020, the first COVID-19 year. Interestingly, it shows an even more negative economic downturn, corresponding to -2.76%.
+
+```{r}
+# Initialize dataframe for detailed outlier information
+outlier_details_df <- tibble(
+  Indicator = character(),
+  Year = integer(),
+  Value = numeric(),
+  Outlier = logical()
+)
+
+# Initialize a list to store the number of outliers for each indicator
+num_outliers_list <- list()
+
+# Loop through each indicator to identify outliers
+for (indicator_name in names(combined_data)[-1]) {
+  indicator_data <- combined_data %>%
+    select(Year, Value = all_of(indicator_name)) %>%
+    na.omit()
+  
+  # Calculate the IQR and identify outliers
+  Q1_value <- quantile(indicator_data$Value, 0.25, na.rm = TRUE)
+  Q3_value <- quantile(indicator_data$Value, 0.75, na.rm = TRUE)
+  IQR_value <- Q3_value - Q1_value
+
+  # Identify outliers
+  outlier_data <- indicator_data %>%
+    filter(Value < Q1_value - 1.5 * IQR_value | Value > Q3_value + 1.5 * IQR_value) %>%
+    mutate(Outlier = TRUE) %>%
+    select(Year, Value, Outlier)
+
+  # Add to the outlier details dataframe
+  if (nrow(outlier_data) > 0) {
+    outlier_data$Indicator <- indicator_name
+    outlier_details_df <- bind_rows(outlier_details_df, outlier_data)
+  }
+
+  # Store the number of outliers for each indicator
+  num_outliers_list[[indicator_name]] <- nrow(outlier_data)
+}
+
+# Check Missing Values per indicator
+missing_values_per_column <- combined_data %>%
+  select(-Year) %>%
+  summarise_all(~ sum(is.na(.)))
+
+# Check for duplicates based on Year
+duplicates_per_year <- combined_data %>%
+  group_by(Year) %>%
+  summarise(Count = n()) %>%
+  filter(Count > 1)
+
+# Create a summary table after the loop
+data_quality_summary <- names(combined_data)[-1] %>%
+  map_df(~ tibble(
+    Indicator = .x,
+    Num_Of_Missing = missing_values_per_column[[.x]],
+    Num_Of_Duplicates = if (.x == "Year") nrow(duplicates_per_year) else NA_integer_,
+    Num_Of_Outliers = num_outliers_list[[.x]]
+  ))
+
+# Apply kable styling to data quality summary table
+summary_table <- kable(data_quality_summary, 
+                       caption = "Data Quality Summary (Excluding Outliers)", 
+                       escape = F, 
+                       format = "html",
+                       col.names = c("Indicator", "Num. of Missing", "Num. of Duplicates", "Num. of Outliers"), 
+                       align = c('l', 'r', 'r', 'r')) %>%
+  kable_styling(bootstrap_options = c("striped", "bordered", "hover"),
+                full_width = F, 
+                position = "center", 
+                font_size = 12) %>%
+  scroll_box(width = "100%", height = "300px")
+
+# Display the summary table
+summary_table
+
+# Apply kable styling to outlier details table, only if there are outliers
+if (nrow(outlier_details_df) > 0) {
+  outlier_details_table <- kable(outlier_details_df, 
+                                 caption = "Outlier Details", 
+                                 escape = F, 
+                                 format = "html",
+                                 col.names = c("Indicator", "Year", "Value", "Outlier"), 
+                                 align = c('l', 'r', 'r', 'r')) %>%
+    kable_styling(bootstrap_options = c("striped", "bordered", "hover"),
+                  full_width = F, 
+                  position = "center", 
+                  font_size = 12)
+
+  # Display the outlier details table
+  outlier_details_table
+}
+```
+
+## Summary Statistics
+
+Before the visualizations, my next step is to display the summary statistics in a table format for each dataset taken into consideration. The usual mean, median, maximum, minimum and standard deviation are calculated with a special function, repeated for each financial indicator.\
+The results are displayed with an interactive table using the DT package for a more user friendly experience.
+
+```{r}
+# Function to calculate summary statistics for a column
+calculate_stats <- function(data, column_name) {
+  data %>%
+    summarize(
+      Indicator = column_name,
+      Mean = mean(.data[[column_name]], na.rm = TRUE),
+      Median = median(.data[[column_name]], na.rm = TRUE),
+      Max = max(.data[[column_name]], na.rm = TRUE),
+      Min = min(.data[[column_name]], na.rm = TRUE),
+      Std_Dev = sd(.data[[column_name]], na.rm = TRUE)
+    )
+}
+
+# Calculate summary statistics for each indicator column
+summary_stats <- lapply(names(combined_data)[-1], function(column_name) {
+  calculate_stats(combined_data, column_name)
+}) %>%
+  bind_rows()
+
+# Render the table as an interactive DataTable
+datatable(summary_stats, 
+          options = list(pageLength = 5, autoWidth = TRUE),
+          class = 'cell-border stripe', 
+          rownames = FALSE) %>%
+  formatRound(columns = 2:ncol(summary_stats), digits = 2)
+```
+
+## Visualizations of Indicators
+
+After some of the preliminary stages the visualizations can now be displayed. There are generally different techniques here that could be used, from static to interactive. I chose the latter, to economize on space and to make the visualizations more user-friendly.
+
+The first step involves standardizing the data, as they are on different scales, to allow for better comparability. I then proceeded by creating an interactive plot using plotly, where year is set on the x-axis and the standardized values are set on the y-axis. The interactivity allows the users to click on a specific point and see the original and standardized values, as well as the year they correspond to. A drop-down menu is also present, so that in a very comfortable way the indicator of choice can be selected by using the scroll bar present on the right.
+
+Lastly, two significant periods are highlighted. In red the peak years of the financial crises, from 2007 to 2009. In green the recovery period, from 2010 to 2014. This allows the user to have a very intuitive look at the different time series, that in many cases confirm macroeconomic theory to a great extend.\
+Gross savings, GDP growth, market capitalization, inflation, gross capital formation, foreign investment, consumption hit very low values. Intuitively, others, like central government debt, broad money, unemployment hit dangerously high values.
+
+```{r}
+# We first start with the standardization of the data 
+indicator_names <- colnames(combined_data)[-1]  # Exclude the first column which is 'Year'
+
+# Create a copy of the data for standardized values
+standardized_data <- combined_data
+standardized_data[indicator_names] <- as.data.frame(lapply(standardized_data[indicator_names], scale))
+
+# Create the interactive plot with a dropdown menu
+interactive_plot <- plot_ly(data = combined_data, x = ~Year)
+
+# Add traces for each indicator
+for(indicator in indicator_names) {
+  # Set visibility: only the first indicator's trace is visible initially
+  is_visible <- indicator == indicator_names[1]
+  
+  # Generate the hover text
+  hover_text <- paste("Year: ", combined_data$Year,
+                      "<br>Original Value: ", combined_data[[indicator]],
+                      "<br>Standardized Value: ", standardized_data[[indicator]])
+  
+  interactive_plot <- interactive_plot %>%
+    add_trace(y = standardized_data[[indicator]],  # Use standardized data here
+              name = indicator,
+              visible = is_visible,
+              type = 'scatter',
+              mode = 'lines+markers',
+              text = hover_text,  # Set the hover text
+              hoverinfo = 'text+name')
+}
+
+# Create dropdown menu entries
+buttons <- list()
+for(i in seq_along(indicator_names)) {
+  visibility_vals <- rep(FALSE, length(indicator_names))
+  visibility_vals[i] <- TRUE
+  buttons[[i]] <- list(
+    method = "restyle",
+    args = list("visible", visibility_vals),
+    label = indicator_names[i]
+  )
+}
+
+# Update layout with dropdown menu and fixed y-axis range
+interactive_plot <- interactive_plot %>%
+  layout(
+    xaxis = list(title = "Year", range = c(1990, 2020)),
+    yaxis = list(title = "Standardized Indicator Value", range = c(3, 3)),  # Fixed y-axis range
+    showlegend = FALSE,
+    updatemenus = list(
+      list(
+        y = 1.15,
+        x = 0.5,
+        xanchor = "center",
+        yanchor = "top",
+        buttons = buttons
+      )
+    ),
+    dragmode = "pan",
+    hovermode = "closest"
+  )
+
+# To highlight the financial crisis period (2007-2009) in red
+highlight_crisis <- list(
+  type = "rect",
+  xref = "x",
+  yref = "paper",
+  x0 = 2007,
+  x1 = 2009,
+  y0 = 0,
+  y1 = 1,
+  fillcolor = "red",
+  opacity = 0.2,
+  line = list(width = 0)
+)
+
+# To highlight the recovery period (2010-2012) in green
+highlight_recovery <- list(
+  type = "rect",
+  xref = "x",
+  yref = "paper",
+  x0 = 2010,
+  x1 = 2014,
+  y0 = 0,
+  y1 = 1,
+  fillcolor = "green",
+  opacity = 0.2,
+  line = list(width = 0)
+)
+
+# Add the highlights to the plot and remove default toolbar
+interactive_plot <- interactive_plot %>%
+  layout(shapes = list(highlight_crisis, highlight_recovery)) %>%
+  config(displayModeBar = FALSE)  # Remove default toolbar
+
+# Display the plot
+interactive_plot
+```
+
+## Visualizing Correlations among Economic Indicators
+
+In this final part I examined the relationship between the different indicators with a correlation heath-map.\
+In this code chunk an interactive version is displayed, where by touching on the number the user can see to which indicators it corresponds to. The strongest positive correlations are displayed in red, the strongest negative correlations in blue.\
+The calculations are very straightforward, the correlation matrix is first created, excluding the year column, then transformed into long format, more suitable for visualization.\
+From then, the classic ggplot heath-map is then converted using plotly, allowing the interactive features previously explained.\
+The next and last code chunk will then display the most significant correlations in a more intuitive way.
+
+```{r}
+# Calculate correlations
+cor_matrix <- cor(combined_data[-1])  # Exclude the 'Year' column
+
+# Melt the correlation matrix
+cor_melted <- melt(cor_matrix)
+
+# Create ggplot heatmap
+heatmap_plot <- ggplot(data = cor_melted, aes(x=Var1, y=Var2)) +
+  geom_tile(aes(fill=value), color='white') +
+  geom_text(aes(label=round(value, 2)), size=2) +  # Adjust text size if necessary
+  scale_fill_gradient2(low="blue", high="red", midpoint=0) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) +
+  labs(fill="Correlation")
+
+# Convert to plotly object for interactivity and specify dimensions
+interactive_heatmap <- ggplotly(heatmap_plot, width = 800, height = 800) %>%
+  config(displayModeBar = FALSE)  # Remove the default toolbar
+
+# Print or render the interactive heatmap
+interactive_heatmap
+```
+
+## Showing Significant Correlations
+
+To better highlight the significant correlations a table format is also offered. The correlations are filtered from the correlation matrix, by setting a trash-old of 0.5 absolute value. The avoid redundancy, I created a unique identifier for each pair of values, removing the duplicates.
+
+The data is then ordered by strength of each correlation, with the strongest positive on top and strongest negative at the bottom, in a thermometer-like order.
+
+The last passage involves then using kable for better styling. To ensure the readability in maintained, the first panel is "frozen" (creating an Excel-like effect) and a scroll-box is created.\
+Some of those correlations are very intuitive and easy to interpret, and confirm classic macroeconomic theory. For example savings are positively associated with gross capital formation (as saving more is typically conducive to higher levels of investment), and consumption expenditure is inversely associated with gross savings (clearly the more you consume the less you can save). Others instead, are more complex in their interpretation. Broad money has an almost perfect correlation with central government debt, that could be due to the fact that broad money supply often increases with debt because the former can include the latter within its measurement. This may imply that as the government issues more debt, the banking sector's money supply rises as it purchases government securities. As statisticians have said for a very long time, correlation doesn't imply causation.\
+Indeed, this correlation requires careful analysis to determine if it's a direct causation or merely a coincidental trend influenced by other economic factors.
+
+```{r}
+# Filter out self-correlations
+significant_correlations <- subset(cor_melted, abs(value) > 0.5 & Var1 != Var2)
+
+# Create a unique identifier for each pair and remove duplicates
+significant_correlations$pair <- apply(significant_correlations[, c("Var1", "Var2")], 1, function(x) paste(sort(x), collapse = "-"))
+significant_correlations <- significant_correlations[!duplicated(significant_correlations$pair), ]
+
+# Remove the 'pair' column right after removing duplicates
+significant_correlations$pair <- NULL
+
+# Order by correlation values like a thermometer (positive to negative)
+significant_correlations <- significant_correlations[order(significant_correlations$value, decreasing = TRUE), ]
+
+# Create a kable table with styling, without row names
+significant_cor_table <- kable(significant_correlations, 
+                               caption = "Significant Correlations (above 0.5 or below -0.5, excluding self-correlations and duplicates)", 
+                               format = "html", 
+                               booktabs = TRUE,
+                               row.names = FALSE) %>%  # Set row.names to FALSE
+  kable_styling(bootstrap_options = c("striped", "bordered", "hover"),
+                full_width = FALSE, 
+                position = "center", 
+                font_size = 12) %>%
+  scroll_box(width = "100%", height = "300px")
+
+# Display the table
+significant_cor_table
+```
+
+## Conclusion
+
+The different operations indicated, as expected, that the Financial Crises of 2007-2009 was with no doubt the most destructive global event that this generation witnessed.
+
+To confirm that, most of the values that were "anomalies" in the time period studied were registered in the year 2009.\
+Indeed, I believe they speak for themselves in terms of gravity:
+
+-   Broad money (% of GDP): Hits an all time high during that decade, of 90.69% in 2009.
+
+-   GDP growth (annual %): Shows a dramatic -2.59% during 2009, peaking after two years of negative growth.
+
+-   Gross capital formation (% of GDP): Declines all the way to 17.76%.
+
+-   Gross savings (% of GDP): Another all time low of 13.82 %.
+
+-   Inflation, consumer prices (annual %): Another example of economic instability with a low of -0.35% during 2009.
+
+-   Market capitalization of listed domestic companies (% of GDP): Shows a big crush with a low 78.47% during 2009 compared to its historical trend.
+
+-   Revenue, excluding grants (% of GDP): Shows a dangerously low value of 15.66% during 2009.
+
+-   Unemployment, total (% of total labor force) (national estimate): Peaks at 2010, but shows an impressive (in a very negative way) 9.25% during 2009.
+
+Examining these trends and delving deeper into the data during this project for "Programming Lab 2" has equipped me with some valuable insights. This enhanced understanding has been essential for effectively facing and interpreting the cluster analysis in my subsequent "Big Data in Social Sciences" project.
+
+## Bibliography
+
+-   Kurlat, P. (2020). *A Course in Modern Macroeconomics*. Independently Published.
+
+-   Imai, K. (2017). *Quantitative Social Science: An Introduction*. Princeton University Press.
+
+-   Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for Data Science* (2nd ed.). O'Reilly Media, Inc.
+
+-   Sowell, T. (2014). *Basic Economics, Fifth Edition: A Common Sense Guide to the Economy*. Blackstone Publishing.
+
+-   Sowell, T. (2009). *The Housing Boom and Bust*. Blackstone Publishing.
+
+-   Stock, J. H., & Watson, M. W. (2020). *Introduction to Econometrics* (4th ed., Global Edition). Pearson.
