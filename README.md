@@ -17,3 +17,5 @@ Part1US.qmd: Performs the analysis of the US economy with interpretations of the
 Part2W.R: Perform the PCA and clustering techniques on many different countries.
 
 Part2W.pdf: Contains the results and visualizations from the world economy analysis with a brief explanation.
+
+Unzipped_data: zip files with all the datasets from the World Bank used in the analysis
