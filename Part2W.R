@@ -15,7 +15,7 @@ suppressWarnings(suppressMessages({
 
 # Reading the CSV files suppressing warnings
 suppressWarnings(suppressMessages({
-  file_path <- "/Users/aledo/Desktop/R_PROJECT_3 YEAR_PRO_2/Unzipped_data/"
+  file_path <- "./Unzipped_data/"
   files <- c(
     "API_NY.GDP.MKTP.KD.ZG_DS2_en_csv_v2_5871639.csv",  # GDP growth (annual %)
     "API_CM.MKT.LCAP.GD.ZS_DS2_en_csv_v2_5873240.csv",  # Market capitalization of listed domestic companies (% of GDP)
@@ -36,45 +36,6 @@ suppressWarnings(suppressMessages({
     read_csv(paste0(file_path, file), skip = 3)
   })
 }))
-
-################################################################################
-# Correlation plot
-# Define country of interest and years of interest
-country_of_interest <- "United States"
-years_of_interest <- 1990:2020
-
-# Filter, reshape, and combine the data list into one wide-format dataframe
-combined_data_correlation_plot <- bind_rows(lapply(data_list, function(df) {
-  df %>%
-    filter(`Country Name` == country_of_interest) %>%
-    select(`Country Name`, `Country Code`, `Indicator Name`, all_of(as.character(years_of_interest)))
-})) %>%
-  pivot_longer(cols = as.character(years_of_interest), names_to = "Year", values_to = "Value") %>%
-  pivot_wider(names_from = `Indicator Name`, values_from = "Value", id_cols = "Year") %>%
-  mutate(Year = as.numeric(Year))  # Convert Year to numeric if it's not already
-
-# Calculate correlations
-cor_matrix <- cor(combined_data_correlation_plot[-1])  # Exclude the 'Year' column
-
-# Melt the correlation matrix
-cor_melted <- melt(cor_matrix)
-
-# Create ggplot heatmap
-heatmap_plot_correlation <- ggplot(data = cor_melted, aes(x = Var1, y = Var2, fill = value)) +
-  geom_tile(color = 'white') +
-  geom_text(aes(label = round(value, 2)), size = 2) +  # Adjust text size
-  scale_fill_gradient2(low = "blue", high = "red", midpoint = 0) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 7),  # Perpendicular text on x-axis
-        axis.text.y = element_text(angle = 0, vjust = 0.5, size = 7),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        aspect.ratio = 1,  # Ensure the plot is square
-        plot.margin = margin(10, 10, 10, 10)) +  # Adjust plot margins
-  labs(x = "Indicator", y = "Indicator", fill = "Correlation")
-
-# Print the heatmap
-print(heatmap_plot_correlation) #Enlarge the plot with the zoom function for interpretation
 
 ################################################################################
 # Heatmap business cycles

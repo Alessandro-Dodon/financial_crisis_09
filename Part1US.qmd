@@ -52,6 +52,7 @@ I start by loading the libraries required for the analysis, which will give prim
 The datasets, were downloaded directly from the website <https://data.worldbank.org/indicator> (where the user can select each indicator from the search bar) in CSV format. Later they were unzipped and separated from the metadata. They were then simply loaded by inserting the working directory, and creating a data list.
 
 ```{r}
+getwd()
 # Load Libraries and suppress warnings
 suppressWarnings(suppressMessages({
   library(reshape2)
@@ -67,9 +68,11 @@ suppressWarnings(suppressMessages({
   library(tidyverse)  # This will load readr, dplyr, tidyr, ggplot2 and some others
 }))
 
-# Reading the CSV files suppressing warnings
+# Set relative path to the data folder
+file_path <- "./Unzipped_data/"
+
+# Reading the CSV files with the relative path
 suppressWarnings(suppressMessages({
-  file_path <- "C:/Users/aledo/OneDrive/Desktop/R_PROJECT_3 YEAR_PRO_2/Unzipped_data/"
   files <- c(
     "API_BN.CAB.XOKA.CD_DS2_en_csv_v2_5873206.csv",
     "API_CM.MKT.LCAP.GD.ZS_DS2_en_csv_v2_5873240.csv",
