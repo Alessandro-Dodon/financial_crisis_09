@@ -52,7 +52,6 @@ I start by loading the libraries required for the analysis, which will give prim
 The datasets, were downloaded directly from the website <https://data.worldbank.org/indicator> (where the user can select each indicator from the search bar) in CSV format. Later they were unzipped and separated from the metadata. They were then simply loaded by inserting the working directory, and creating a data list.
 
 ```{r}
-getwd()
 # Load Libraries and suppress warnings
 suppressWarnings(suppressMessages({
   library(reshape2)
