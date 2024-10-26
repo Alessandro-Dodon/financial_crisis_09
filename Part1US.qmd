@@ -113,7 +113,7 @@ The process unfolded as follows:
 4.  Format & Display: Following the extraction, the data was formatted for clear presentation in the Quarto document, with the content organized into easily digestible sections.
 
 ```{r}
-# # Start a browser session
+# Start a browser session
 b <- ChromoteSession$new()
 
 # Navigate to the World Bank page
