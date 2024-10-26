@@ -12,7 +12,7 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 ## Files:
 
-Part1US.qmd: Performs the analysis of the US economy with interpretations of the results.
+Part1US.qmd: Performs the analysis of the US economy with interpretations of the results (it can be rendered as an HTML file for the interactive visualizations and tables).
 
 Part2W.R: Perform the PCA and clustering techniques on many different countries.
 
