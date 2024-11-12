@@ -18,4 +18,4 @@ Part2W.R: Perform the PCA and clustering techniques on many different countries.
 
 Part2W.pdf: Contains the results and visualizations from the world economy analysis with a brief explanation.
 
-Unzipped_data: Folder containing all the datasets from the World Bank used in the analysis.
+Unzipped_data: Folder containing all the datasets (already unzipped) from the World Bank used in the analysis.
