@@ -22,5 +22,5 @@ In this section, the analysis extends to the world economy, using basic machine 
 - Summarizes the results and visualizations from the world economy analysis with a brief explanation.
 
 ### `Unzipped_data`
-- Folder containing all datasets (already unzipped) from the World Bank used in the analysis.
+- Folder containing all datasets (already unzipped) from the World Bank at https://data.worldbank.org/indicator used in the analysis. 
 
