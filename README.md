@@ -22,4 +22,4 @@ In this section, the analysis extends to the world economy, using basic machine 
 - Summarizes the results and visualizations from the world economy analysis with a brief explanation.
 
 ### `Unzipped_data`
-- A folder containing all datasets used in the analysis, sourced from the World Bank's indicators database at data.worldbank.org/indicator, and provided in an unzipped format.
+- Folder containing all datasets (already unzipped) from the World Bank used in the analysis. Downloaded from https://data.worldbank.org/indicator. 
