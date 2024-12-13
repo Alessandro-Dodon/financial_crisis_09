@@ -12,10 +12,15 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 ## Files:
 
-**Part1US.qmd**: Performs the analysis of the US economy with interpretations of the results (it can be rendered as an HTML file for the interactive visualizations and tables).
+### `Part1US.qmd`
+- Analyzes the US economy, including interpretations of the results. Can be rendered as an HTML file for interactive visualizations and tables.
 
-**Part2W.R**: Perform the PCA and clustering techniques on many different countries.
+### `Part2W.R`
+- Applies PCA and clustering techniques across various countries.
 
-**Part2W.pdf**: Contains the results and visualizations from the world economy analysis with a brief explanation.
+### `Part2W.pdf`
+- Summarizes the results and visualizations from the world economy analysis with a brief explanation.
 
-**Unzipped_data**: Folder containing all the datasets (already unzipped) from the World Bank used in the analysis.
+### `Unzipped_data`
+- Folder containing all datasets (already unzipped) from the World Bank used in the analysis.
+
