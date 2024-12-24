@@ -1,4 +1,5 @@
 # Financial Crises Analysis
+## Overview
 
 This project explores the economic impact of financial crises on both the U.S. economy and the world economy. The analysis is split into two parts, each using different methodologies to assess the effects of financial crises. Data came from the World Bank economic indicators.
 
@@ -23,3 +24,10 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 ### `Unzipped_data`
 - Folder containing all datasets (already unzipped) from the World Bank used in the analysis. Also available at https://databank.worldbank.org/home for more information.
+
+## User Guide
+
+Ensure R and Quarto are installed. The .qmd file can be rendered to HTML, and the .R file runs automatically by pressing "Run" sequentially in RStudio. Data must be placed in the Unzipped_data folder, included in this repository, in the same directory as the script.
+
+If any required packages are missing, simply remove the # at the start of the install.packages() lines in the scripts to install them. Note that the chromote package supports rendering in headless browsers like Chrome but is not limited to it.
+
