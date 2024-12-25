@@ -28,5 +28,5 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 Ensure R and Quarto are installed. The .qmd file can be rendered to HTML, and the .R file runs automatically by pressing "Run" sequentially in RStudio. Data must be placed in the `Unzipped_data` folder, included in this repository, in the same directory as the script.
 
-If any required packages are missing, simply remove the # at the start of the install.packages() lines in the scripts to install them. Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers
+If any required packages are missing, simply remove the # at the start of the install.packages() lines in the scripts to install them. Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
 
