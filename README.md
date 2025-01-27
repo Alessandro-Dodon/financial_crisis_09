@@ -18,11 +18,11 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 **`Part2W.pdf`** Summarizes the results and visualizations from the world economy analysis with a brief explanation.
 
-**`Unzipped_data`** Folder containing all datasets (already unzipped) from the World Bank used in the analysis. Also available at https://databank.worldbank.org/home for more information.
+**`Unzipped_data`** Folder containing all datasets (already unzipped) from the World Bank used in the analysis. 
 
 ## User Guide
 
-Ensure R and Quarto are installed. The .qmd file can be rendered to HTML, and the .R file runs automatically by pressing "Run" sequentially in RStudio. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path).
+Ensure R and Quarto are installed. The .qmd file can be rendered to HTML, and the .R file runs automatically by pressing "Run" sequentially in RStudio. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
 
 If any required packages are missing, simply remove the # at the start of the install.packages() lines in the scripts to install them. Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
 
