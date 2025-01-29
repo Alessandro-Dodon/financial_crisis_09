@@ -22,7 +22,7 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 ## User Guide
 
-Ensure R and Quarto are installed. The .qmd file can be rendered to HTML, and the .R file runs automatically by pressing "Run" sequentially in RStudio. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
+Ensure R and Quarto are installed. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
 
 Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
 
