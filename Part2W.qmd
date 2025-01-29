@@ -1,0 +1,430 @@
+---
+title: '\textbf{Comparative Analysis of Clustering Techniques in Macroeconomics: Unraveling Global Economic Patterns during the 2009 Financial Crisis}'
+author: Alessandro Dodon, 0001032158
+format:
+  pdf:
+    documentclass: article
+    fontsize: 11pt
+    papersize: letter
+    margin: 1in
+    geometry:
+      - top=1in
+      - bottom=1in
+      - left=1in
+      - right=1in
+    header-includes:
+      - '\usepackage{amsmath}'
+      - '\usepackage{graphicx}'
+editor: visual
+knitr:
+  opts_chunk:
+    warning: false
+---
+
+## **Introduction**
+
+The Financial Crises remains one of the most "mysterious" events in modern history. The debate about the true causes of the crises remains unsettled, and furthermore, it was one of the biggest global economic downturns of the last century, very comparable in a way to the Great Depression. Because of those reasons, it captured the attentions of many historians, economists, mathematicians, statisticians and even public intellectuals. Plenty of qualitative insights have been offered, but I can not say the same for more quantitative forms of analysis.
+
+In this study I present an application of Unsupervised Machine Learning and Data Analysis to study the Financial Crises of 2007-2009, exploring panel data from the World Bank, available at <https://data.worldbank.org/indicator>. To download the datasets, users can utilize the search function on the provided website. This project, part of the "Big Data in Social Sciences" course, extends my prior work from "Programming Lab 2," with a new emphasis on statistical analysis and the application of various models.
+
+My main research question is: "How were countries impacted by the peak year of the Financial Crises in 2009?"
+
+This PDF has been rendered using Quarto, and to economize on space the code is not shown. Here I outline the main results of my analysis and the crucial steps, but all of the calculations and codes can be seen in the R script.
+
+The initial step was to download, unzip, and load datasets comprising thirteen macroeconomic/ financial indicators, quantitative, numerical and continuous in nature.
+
+Using a combination of macroeconomic theory and a correlation plot, I picked the most significant ones for my analysis, which are:
+
+-   GDP Growth (annual %): Measures the year-over-year increase in a country's economic output, indicating economic health and productivity.
+
+-   Market Capitalization of Listed Domestic Companies (% of GDP): Reflects the total value of all publicly traded companies as a proportion of GDP, indicating the development and efficiency of the stock market and its role in economic growth.
+
+-   Inflation (Consumer Prices, annual %): Tracks the annual rate of increase in consumer prices, important for evaluating purchasing power and the effectiveness of monetary policies.
+
+-   Central Government Debt (Total % of GDP): Represents the government's debt as a percentage of GDP, providing insight into fiscal sustainability and economic impact.
+
+-   Foreign Direct Investment (Net Inflows % of GDP): Measures net inflows of investment from abroad as a percentage of GDP, indicating the level of external investment and its role in economic development.
+
+-   Unemployment (Total % of Total Labor Force, National Estimate): Indicates the percentage of the labor force that is unemployed, essential for assessing labor market conditions and economic health.
+
+Due to the length constraints, this report primarily focuses on the results, interpretations and the thought process behind each step. However, the complete analysis can be found in the R script. This approach assures a concise yet comprehensive review of the study.
+
+```{r}
+#| echo: false
+# Load Libraries and suppress warnings
+suppressWarnings(suppressMessages({
+  library(forecast)
+  library(reshape2)
+  library(chromote)
+  library(car)
+  library(stats)
+  library(tseries)
+  library(ggfortify)
+  library(plotly)
+  library(DT)
+  library(knitr)
+  library(kableExtra)
+  library(scales)
+  library(ggrepel)
+  library(Rtsne)
+  library(tidyverse)  # This will load readr, dplyr, tidyr, ggplot2 and some others
+}))
+
+# Reading the CSV files suppressing warnings
+suppressWarnings(suppressMessages({
+  file_path <- "/Users/aledo/Desktop/Scrivania - MacBook Air di Alessandro/Unibo/R_PROJECT_3 YEAR_PRO_2/Unzipped_data/"
+  files <- c(
+    "API_NY.GDP.MKTP.KD.ZG_DS2_en_csv_v2_5871639.csv",  # GDP growth (annual %)
+    "API_CM.MKT.LCAP.GD.ZS_DS2_en_csv_v2_5873240.csv",  # Market capitalization of listed domestic companies (% of GDP)
+    "API_FP.CPI.TOTL.ZG_DS2_en_csv_v2_5871597.csv",     # Inflation, consumer prices (annual %)
+    "API_GC.DOD.TOTL.GD.ZS_DS2_en_csv_v2_5872587.csv",  # Central government debt, total (% of GDP)
+    "API_BX.KLT.DINV.WD.GD.ZS_DS2_en_csv_v2_5994659.csv",  # Foreign direct investment, net inflows (% of GDP)
+    "API_SL.UEM.TOTL.NE.ZS_DS2_en_csv_v2_5996644.csv",   # Unemployment, total (% of total labor force) (national estimate)
+    "API_BN.CAB.XOKA.CD_DS2_en_csv_v2_5873206.csv",
+    "API_NE.GDI.TOTL.ZS_DS2_en_csv_v2_5873774.csv",
+    "API_FM.LBL.BMNY.GD.ZS_DS2_en_csv_v2_5873493.csv",
+    "API_GC.REV.XGRT.GD.ZS_DS2_en_csv_v2_5873527.csv",
+    "API_NY.GNS.ICTR.ZS_DS2_en_csv_v2_5873909.csv",
+    "API_FR.INR.LEND_DS2_en_csv_v2_5873491.csv",
+    "API_NE.CON.TOTL.ZS_DS2_en_csv_v2_5995951.csv"
+  )
+  
+  data_list <- lapply(files, function(file) {
+    read_csv(paste0(file_path, file), skip = 3)
+  })
+}))
+```
+
+## **Heat map Analysis of Global Business Cycles**
+
+To gain a preliminary understanding of the global effect of the crises I plotted a heat map using the GDP growth indicator. A large list of countries was selected (chosen for their diverse characteristics and global relevance), many of which will be studied later. The interpretation is very straightforward, displaying in red the years where the countries faced negative growth and in blue the years where they faced positive
+
+Two years indicated very severe economic downturns, 2009, peak of the Financial Crises, and 2020, marked by the COVID-19 pandemic. To simplify the complexity of the time component of the data I decided to focus exclusively on the year 2009.
+
+```{r, fig.width=48, fig.height=32}
+#| echo: false
+#| fig.align: 'center'  # This line centers the plot in the PDF output
+# Re-load the data
+gdp_growth_data <- data_list[[1]]
+
+# List of countries for which we want to plot the heatmap (adjust accordingly)
+heatmap_countries <- c("United States", "Japan", "Germany", "China", "Greece", "Iceland", "Spain", 
+                       "Ireland", "Portugal", "Italy", "France", "United Kingdom", "Russian Federation", 
+                       "India", "Brazil", "Ukraine", "Australia", "Canada", "Mexico", 
+                       "Indonesia", "Turkey", "Estonia", "Saudi Arabia", "Sweden", 
+                       "Netherlands", "Switzerland", "Argentina", "Nigeria", "Poland", "Egypt")
+
+# Select the data for the chosen countries and years 1960-2022
+heatmap_data_selected <- data_list[[1]] %>%
+  filter(`Country Name` %in% heatmap_countries) %>%
+  select(`Country Name`, `1960`:`2022`) # Include years 2021 and 2022
+
+# Reshape the data for plotting
+heatmap_data_melted <- melt(heatmap_data_selected, id.vars = "Country Name")
+
+# Create the heatmap with further adjustments for an even larger and more spaced out legend
+gdp_growth_heatmap <- suppressWarnings(
+  ggplot(heatmap_data_melted, aes(x = variable, y = `Country Name`, fill = value)) +
+    geom_tile(color = "white", linewidth = 0.1) + # Use linewidth instead of size
+    scale_fill_gradientn(
+      colors = c("red", "orange", "white", "lightblue", "blue"),
+      limits = c(-10, 15),
+      na.value = "grey50",
+      name="GDP Growth (%)",
+      guide = guide_colorbar(title.position = "top", title.hjust = 0.5,
+                             barwidth = 30, barheight = 1.5) # Adjust barwidth and barheight if needed
+    ) +
+    scale_x_discrete(breaks = c("1960", "1970", "1980", "1990", "2000", "2010", "2020")) +
+    theme_minimal() +
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 44),
+      axis.text.y = element_text(size = 44),
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      plot.title = element_text(hjust = 0.5, size = 65),
+      legend.position = "bottom",
+      legend.title = element_text(size = 50), # Adjust legend title size
+      legend.text = element_text(size = 50), # Adjust legend text size
+      legend.key.height = unit(3, 'lines'), # Adjust the height of the legend keys
+      legend.key.width = unit(3, 'cm'), # Adjust the width of the legend keys
+      legend.spacing.y = unit(1, 'cm'), # Adjust spacing between legend labels
+      legend.margin = margin(t = 10, b = 10, unit = 'pt'), # Adjust the margins around the entire legend
+      plot.margin = margin(2, 2, 2, 2, "cm")
+    ) +
+    labs(x = "", y = "", title = "Visualization of Business Cycles (1960-2022)")
+)
+
+# Display the heatmap
+print(gdp_growth_heatmap)
+```
+
+## **Data Pre-processing, Clustering Techniques and PCA Interpretation**
+
+As always, the data has to be pre-processed before the statistical analysis. I first removed the missing values, which unfortunately excluded many countries, then I created dataframes with the appropriate structure for the study.\
+As the indicators were on different scales, the data was standardized.\
+I now explored different clustering techniques, starting with the classing k-means algorithm. This method, applied directly to the standardized data, showed slightly higher precision (compared to the other techniques), and could operate on three or four clusters effectively based on the elbow plot. However, it was incompatible with 2D plotting.
+
+To address this, I implemented PCA into the analysis. While using only the first two principal components, which captured over half of the variance, may not handle all of the complexities, allowed for a manageable 2D plot.
+
+To interpret the PCA I plotted the correlations (as well as a table in the R script to confirm the results). Inflation shows a strong positive correlation with PC1 and a slight positive correlation with PC2. GDP growth has a strong positive correlation with PC2 but a negative one with PC1. Market capitalization exhibits a strong negative correlation with PC1 and a slight positive correlation with PC2. Foreign investment displayed negative correlations with both PCs, while unemployment had a strong negative correlation primarily with PC2.\
+This passage enables the advancement to the k-means analysis of the PCA and the successful interpretation of the results.
+
+```{r}
+#| echo: false
+#| fig.align: 'center'  # This line centers the plot in the PDF output
+# Create dataframe for 2009
+# Extract data for 2009 from the first six datasets
+data_crises <- lapply(data_list[1:6], function(df) {
+  df %>%
+    select(`Country Name`, `2009`)
+})
+
+# Naming the datasets for clarity, corresponding to the first six datasets
+names(data_crises) <- c("GDP Growth", "Market Capitalization", "Inflation", "Government Debt", "Foreign Investment", "Unemployment")
+
+# Merging the datasets on Country Name
+data_merged_crises <- Reduce(function(x, y) merge(x, y, by = "Country Name", all = TRUE), data_crises)
+
+# Renaming columns for clarity
+colnames(data_merged_crises) <- c("Country Name", "GDP Growth (2009)", "Market Capitalization (2009)", "Inflation (2009)", "Government Debt (2009)", "Foreign Investment (2009)", "Unemployment (2009)")
+
+# Remove rows with any NA values
+data_cleaned_crises <- na.omit(data_merged_crises)
+
+# Create a copy of the data before standardization
+data_cleaned_crises_original <- data_cleaned_crises
+
+# Standardize the numeric variables
+data_cleaned_crises[, -1] <- scale(data_cleaned_crises[, -1])
+
+# PCA 
+# Perform PCA on the cleaned data for the crises year
+pca_result_crises <- prcomp(data_cleaned_crises[, -1], center = TRUE, scale. = TRUE)
+
+# Store the rotation matrix
+rotation_matrix_crises <- pca_result_crises$rotation 
+
+# Get the summary of the PCA results
+pca_summary_crises <- summary(pca_result_crises)
+
+# Store the first 2 principal components for k-means clustering
+data_pca_crises <- as.data.frame(pca_result_crises$x[, 1:2])
+
+# PCA plot interpretation
+# Extract the loadings (coefficients for each principal component)
+loadings <- pca_result_crises$rotation[, 1:2]
+
+# Create a dataframe from the loadings for easier use with ggplot2
+loadings_df <- as.data.frame(loadings)
+loadings_df$variable <- rownames(loadings)
+
+# Plot the loadings as arrows, starting from the origin
+plot <- ggplot() +
+  geom_segment(data = loadings_df, aes(x = 0, y = 0, xend = PC1, yend = PC2), 
+               arrow = arrow(type = "closed", length = unit(0.1, "inches")), 
+               color = "black") +
+  geom_text_repel(data = loadings_df, aes(x = PC1, y = PC2, label = variable),
+                  point.padding = unit(0.8, "lines"), # Increased padding
+                  size = 2, # Adjusted text size
+                  nudge_x = 0.03, nudge_y = 0.1, # Nudging text a bit away from arrows
+                  direction = "y", # Repel in y direction
+                  color = "black") +
+  theme_minimal() +
+  labs(title = "Plot of PCA with Macroeconomic Indicators",
+       x = "Principal Component 1 (29%)",
+       y = "Principal Component 2 (24%)") +
+  scale_x_continuous(limits = c(-0.8, 0.8)) +
+  scale_y_continuous(limits = c(-0.8, 0.8)) +
+  theme(
+    axis.title = element_text(size = rel(0.7)), # Adjust axis titles
+    plot.title = element_text(size = rel(0.8), hjust = 0.5)  # Center align the plot title
+  )
+
+print(plot)
+```
+
+## **K-Means Clustering on PCA-Reduced Data**
+
+The combination of k-means clustering with PCA now clusters countries that have a comparable macroeconomic condition in 2009, showing how different economies responded to the Financial Crises.
+
+Despite working with just over half of the variance, the k-means clustering on the PCA-reduced data shows a direct comparability to the clustering conduced over the standardized data (this passage can be found in the R script). For both, the elbow method was used to choose the number of clusters in a more evidence based way, which suggested either three or four clusters.
+
+The interpretation of those results can be found below, after the exploration of another clustering technique.
+
+```{r, fig.width=10, fig.height=10}
+#| echo: false
+#| #| fig.align: 'center'  # This line centers the plot in the PDF output
+# K-means clustering (with PCA)
+# Clustering with k-means on the 2 PCA components
+set.seed(123) # Setting seed for reproducibility
+wss <- numeric(15)
+for (i in 1:15) {
+  kmeans_result_crises <- kmeans(data_pca_crises, centers = i, nstart = 20) # Use the correct variable
+  wss[i] <- kmeans_result_crises$tot.withinss
+}
+
+# Determine the optimal number of clusters from the elbow plot
+optimal_k <- 3 # Adjust based on the elbow plot
+
+# K-means clustering on the three PCA components
+kmeans_result_crises <- kmeans(data_pca_crises, centers = optimal_k, nstart = 20) # Use the correct variable
+
+# Add the cluster assignment to the original data frame
+data_cleaned_crises$Cluster <- as.factor(kmeans_result_crises$cluster)
+
+# Add the first two principal components to the data frame for plotting
+data_cleaned_crises$PCA1 <- pca_result_crises$x[, 1] # Correct pca_result_crises
+data_cleaned_crises$PCA2 <- pca_result_crises$x[, 2] # Correct pca_result_crises
+
+# Improved color scheme for clusters
+# Make sure the number of colors corresponds to the number of clusters
+color_spectrum <- scale_color_manual(values = c("red", "orange", "blue")[1:optimal_k])
+
+# Create a ggplot using the first two principal components for visualization
+p <- ggplot(data_cleaned_crises, aes(x = PCA1, y = PCA2, color = Cluster)) + # Use the correct data frame
+  geom_point(alpha = 0.6, size = 2, shape = 16) +
+  color_spectrum +
+  labs(title = "K-Means Clustering on Principal Components (PC1 and PC2)",
+       x = "Principal Component 1 (29%)",
+       y = "Principal Component 2 (24%)") +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = rel(1.2), hjust = 0.5)  # Center align the plot title
+  )
+
+# Use ggrepel to avoid overlapping text
+p <- p + geom_text_repel(aes(label = `Country Name`), size = 3, max.overlaps = Inf)
+
+# Print the plot
+print(p)
+
+# Create a table with Country Name and Cluster assignment
+cluster_table_pca <- data_cleaned_crises %>%
+  select(`Country Name`) %>%
+  mutate(Cluster = as.factor(kmeans_result_crises$cluster))
+
+# Order the table by cluster number and view it
+cluster_table_ordered_pca <- cluster_table_pca %>%
+  arrange(Cluster)
+```
+
+## **Hierarchical Clustering Insights**
+
+With the hierarchical clustering, using directly the standardized data, a different perspective was gained. The main advantage of this method is that it is not necessary to explicitly choose the number of clusters. Instead, the algorithm determines the grouping based on the data structure, offering a more "complete" picture of the macroeconomic conditions.
+
+A great deal of experimenting was done in the R script, trying to "cut" the trees at different heights, to find an optimal result. What to me seemed the best solutions were either three or two main clusters, and I choose the former option for a direct comparison with the other technique adopted.
+
+However the clusters are notably different. The first, colored red, includes a broad range of countries, including Russia, the US, and various European nations. The second cluster groups eight countries with other distinct macroeconomic profiles. The third contains just four. These variations between the two clustering techniques may arise from the different algorithms and their respective inputs, hierarchical clustering working on standardized data and k-means on PCA-transformed data.
+
+With that being said, the next paragraph will focus on the interpretation of the k-means clustering with PCA.
+
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE}
+#| echo: false
+# Hierarchical clustering (without PCA) and cutting into 3 clusters
+# Hierarchical Clustering on the original data
+dist_matrix <- dist(data_cleaned_crises[, 2:7], method = "euclidean")
+hc_crises <- hclust(dist_matrix, method = "complete")
+
+# Cut the dendrogram to create 3 clusters
+cutree_clusters <- cutree(hc_crises, k = 3)
+
+# Plot the dendrogram with adjusted text size and color branches by cluster
+par(cex = 0.75)  # Adjusts the text size
+plot(hc_crises, labels = data_cleaned_crises$`Country Name`, main = "Hierarchical Clustering Dendrogram",
+     xlab = "", sub = "", cex.main = 1.5, font.main = 1)  # cex.main adjusts the main title size, font.main = 1 for regular font
+
+# Color branches by cluster assignment
+rect.hclust(hc_crises, k = 3, border = 2:4)
+
+# Reset par settings to default (if necessary for subsequent plots)
+par(cex = 1)
+
+```
+
+## **Interpreting K-Means Clustering Outcomes with Data Tables**
+
+To interpret the results of the k-means on the PCA reduced data, I have displayed two sets of tables. The first directly connects each country to its cluster number, as well as displaying the original (and non standardized) data for each indicator.\
+The second table provides the mean values of each macroeconomic indicator across clusters, showing some common trends for each group.
+
+-   Cluster 1 is with no doubt the one that suffered the most severe economic downturn. Countries such as Bulgaria, Colombia, Croatia, Hungary, Romania, the Russian Federation, Turkiye and the Slovak Republic show the most negative GDP mean growth and highest unemployment. Mean market capitalization is also very low, indicating that either those financial markets were not as developed in the first place (which I suspect as those countries are not so "prosperous" to begin with), or that they lost most of their value during the crises. Mean inflation is much higher and mean government debt is much lower compared to the other two clusters, which to me indicates that those countries did not employ "appropriate" monetary policies to combat the crises. The mean foreign investment remains to me more puzzling, as it is not the lowest value out of the three clusters, as I would have expected. One possibility would be that more advanced economies simply invest more in growing countries, as Economist and Nobel laureate R. famously Lucas argued.
+
+-   Cluster 2 indicates still a very severe response to the crises, as the mean GDP growth is negative and unemployment is still very high. We are now taking into consideration many European countries like Austria, Belgium, France, Spain, Greece, but also the US, UK, Canada, Japan, Singapore and others. Mean market capitalization and foreign investment being much higher (compared to the first group) suggests to me that those countries have much more developed economies and financial markets. The very high government debt indicates that as well, and possibly that those countries are adopting different monetary policies to combat the crises. Another possible explanation is that those countries simply spend more with welfare initiatives and public services. The very low inflation could be explained by high unemployment, the asset price deflation, the low GDP growth or to a demand pull inflation reduction. Macroeconomic theory is confirmed here: a country that is facing low demand, high unemployment, and failing of many business and a financial market crush is likely to have very low inflation.
+
+-   Cluster 3 seems to be relatively less effected by the crises. It's composed by countries like Australia, Indonesia, Malaysia, New Zealand, Peru, Switzerland and many others. They show a relatively high mean market capitalization (which I suspect would be similar in the previous years), a positive, even though not stellar, GDP mean growth, and a not dangerously high unemployment figure. The inflation number is higher than that of the previous cluster but I would not consider that an anomaly, a country that is growing needs to pump more money into the economy (at a considered rate) to facilitate the growing amount of economic transactions and maintain the velocity of money. Mean government debt and foreign investment could be interpreted in different ways, I would suspect that those figures have not been impacted as much as well.
+
+```{r}
+#| echo: false
+#| fig.align: 'center'  # This line centers the plot in the PDF output
+# Table to interpret the results (for k-means with PCA)
+# Extract Country Name and Cluster from the PCA-based cluster assignments
+cluster_assignments_pca <- cluster_table_ordered_pca %>%
+  select(`Country Name`, Cluster)
+
+# Merge the PCA-based cluster assignments with the original 2009 data
+data_merged_with_clusters_pca <- data_cleaned_crises_original %>%
+  left_join(cluster_assignments_pca, by = "Country Name")
+
+# Check for any NA values in Cluster and remove those rows
+data_merged_with_clusters_pca <- na.omit(data_merged_with_clusters_pca)
+
+# Order by Cluster
+data_merged_with_clusters_pca <- data_merged_with_clusters_pca %>%
+  arrange(Cluster)
+
+# Styling the data_merged_with_clusters_pca table
+merged_clusters_table <- kable(data_merged_with_clusters_pca, format = "latex", booktabs = TRUE, digits = 2) %>%
+  kable_styling(latex_options = c("striped", "scale_down"), full_width = FALSE, position = "left")
+
+# Group by Cluster and calculate means for the non-standardized data
+cluster_summary_pca <- data_merged_with_clusters_pca %>%
+  group_by(Cluster) %>%
+  summarise(
+    Mean_GDP_Growth = mean(`GDP Growth (2009)`, na.rm = TRUE),
+    Mean_Market_Capitalization = mean(`Market Capitalization (2009)`, na.rm = TRUE),
+    Mean_Inflation = mean(`Inflation (2009)`, na.rm = TRUE),
+    Mean_Government_Debt = mean(`Government Debt (2009)`, na.rm = TRUE),
+    Mean_Foreign_Investment = mean(`Foreign Investment (2009)`, na.rm = TRUE),
+    Mean_Unemployment = mean(`Unemployment (2009)`, na.rm = TRUE)
+  )
+
+# Styling the cluster_summary_pca table
+summary_clusters_table <- kable(cluster_summary_pca, format = "latex", booktabs = TRUE, digits = 2) %>%
+  kable_styling(latex_options = c("striped", "scale_down"), full_width = FALSE, position = "left")
+
+# Output the tables
+merged_clusters_table
+summary_clusters_table
+```
+
+## **Limitations and Potential Future Development**
+
+To conclude this discussion, in the name of intellectual honesty, and for potential future development, I have to highlight the main limitations of the research.
+
+First, the pre-processing component introduced a trade-off between precision and number of countries I was able to study. As I decided to remove each row that had at least one missing value, many countries were completely excluded, such as China for example. According to the heat map analysis, and based on my knowledge it exhibited an interesting behavior during the Financial Crises, as it continued to maintain around 10% GDP growth. Similar things could be said for many other countries. Re-elaborated in statistical terms, I was not able to study the entire population, but was in a way forced to take as small sample (of less than forty countries) because of the pre-processing problems. This clearly diminishes the external validity of the study. The alternative was filling the missing values, but that would have introduced a much higher possibility of error. As it is often said in Economics "There are no solutions, only trade-offs".
+
+Another problem was addressing the time component in panel-data, which was challenging due to autocorrelation, where each year's data (like inflation and GDP growth) depends on previous years. To manage this, I focused on 2009, a crisis peak year for many countries. While this simplified my analysis, it was not the most comprehensive approach for working with this type of data.
+
+The experience from my "Programming Lab 2" project, which concentrated on similar topics for the US, was particularly insightful. Employing techniques like web scraping, data pre-processing, summary statistics, and creating US-centric interactive visualizations helped me better understand and interpret the time series trends.
+
+Also the interpretation of the cluster analysis is not always straightforward, macroeconomic theory allowed me to speculate on some trends, but I am dealing with complex macroeconomic situations of many different countries. I am also, for the sake of simplicity, not directly taking into consideration the variance of those clusters, there could be countries that are outliers and are strongly influencing the mean. In cluster 3 for example, Switzerland has a value of market capitalization of around 192.12%, much higher than any other country in that group. Theory clearly has it limits, the crises was indeed an unexpected phenomenon. Very few predicted or believed that the situation was dangerous before 2007, notably Economist and Nobel laureate Ben Bernanke was one of the very few exceptions.
+
+Also, I am not capturing any degree of causality, as no semi-experimental or regression method was used, so I could formally say that the internal validity is very low. For potential future development they could be implemented, as well as time-series analysis, to further enrich this project. What could be particularly interesting is to find a country that never greatly suffered the crises (like China) and to compare that with a country that did greatly suffer the impact of the crises, in a Did method (also comparing the macroeconomic situation before 2007 to verify the parallel-trend assumption). Another option could be that of a logistic regression, having a dependent variable as binary outcome, for instance, "1" for countries that suffered (e.g., experienced very low or negative GDP growth) and "0" for those that did not suffer (experienced positive GDP growth) during the financial crisis. That could answer interesting policy questions like "Are countries with stricter financial regulations less likely to suffer from negative GDP growth during a financial crisis?" or many others, as there is still minimum consensus among experts in that regard.
+
+Ultimately, I do regard the cluster analysis as a good exploratory operation, but to truly understand how each country was effected I believe more quantitative and qualitative insights are needed. Despite the obvious limitations, this study greatly deepened my understanding of the impact of one of the most significant economic downturns of modern history. My approach intentionally avoided a predefined hypothesis, allowing the data inherent patterns to surface.
+
+Recognizing the immense value of modern quantitative techniques in Economics and Finance, I aspire, within my capabilities and sphere of influence, to contribute to a broader and more profound change. I believe indeed we are all witnessing profound paradigm shifts in those fields. It is my hope that such techniques will be increasingly and more effectively applied in the following years, providing clearer insights into complex economic phenomena.
+
+## **Bibliography**
+
+-   Kurlat, P. (2020). *A Course in Modern Macroeconomics*. Independently Published.
+
+-   Imai, K. (2017). *Quantitative Social Science: An Introduction*. Princeton University Press.
+
+-   Wickham, H., Çetinkaya-Rundel, M., & Grolemund, G. (2023). *R for Data Science* (2nd ed.). O'Reilly Media, Inc.
+
+-   Sowell, T. (2014). *Basic Economics, Fifth Edition: A Common Sense Guide to the Economy*. Blackstone Publishing.
+
+-   Sowell, T. (2009). *The Housing Boom and Bust*. Blackstone Publishing.
+
+-   Stock, J. H., & Watson, M. W. (2020). *Introduction to Econometrics* (4th ed., Global Edition). Pearson.
