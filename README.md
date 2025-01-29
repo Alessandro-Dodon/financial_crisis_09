@@ -14,7 +14,7 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 **`Part1US.qmd`** Analyzes the US economy, including interpretations of the results. Can be rendered as an HTML file for interactive visualizations and tables.
 
-**`Part2W.qmd`** Applies PCA and clustering techniques across various countries. Can be rendered to pdf file containing the full explanation.
+**`Part2W.qmd`** Applies PCA and clustering techniques across various countries. Can be rendered to a pdf file containing the full explanation.
 
 **`Part2W.pdf`** Summarizes the results and visualizations from the world economy analysis with a brief explanation.
 
