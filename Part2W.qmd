@@ -70,16 +70,18 @@ suppressWarnings(suppressMessages({
   library(tidyverse)  # This will load readr, dplyr, tidyr, ggplot2 and some others
 }))
 
+# Set relative path to the data folder
+file_path <- "./Unzipped_data/"
+
 # Reading the CSV files suppressing warnings
 suppressWarnings(suppressMessages({
-  file_path <- "/Users/aledo/Desktop/Scrivania - MacBook Air di Alessandro/Unibo/R_PROJECT_3 YEAR_PRO_2/Unzipped_data/"
   files <- c(
-    "API_NY.GDP.MKTP.KD.ZG_DS2_en_csv_v2_5871639.csv",  # GDP growth (annual %)
-    "API_CM.MKT.LCAP.GD.ZS_DS2_en_csv_v2_5873240.csv",  # Market capitalization of listed domestic companies (% of GDP)
-    "API_FP.CPI.TOTL.ZG_DS2_en_csv_v2_5871597.csv",     # Inflation, consumer prices (annual %)
-    "API_GC.DOD.TOTL.GD.ZS_DS2_en_csv_v2_5872587.csv",  # Central government debt, total (% of GDP)
-    "API_BX.KLT.DINV.WD.GD.ZS_DS2_en_csv_v2_5994659.csv",  # Foreign direct investment, net inflows (% of GDP)
-    "API_SL.UEM.TOTL.NE.ZS_DS2_en_csv_v2_5996644.csv",   # Unemployment, total (% of total labor force) (national estimate)
+    "API_NY.GDP.MKTP.KD.ZG_DS2_en_csv_v2_5871639.csv",  
+    "API_CM.MKT.LCAP.GD.ZS_DS2_en_csv_v2_5873240.csv",   
+    "API_FP.CPI.TOTL.ZG_DS2_en_csv_v2_5871597.csv",     
+    "API_GC.DOD.TOTL.GD.ZS_DS2_en_csv_v2_5872587.csv",  
+    "API_BX.KLT.DINV.WD.GD.ZS_DS2_en_csv_v2_5994659.csv",  
+    "API_SL.UEM.TOTL.NE.ZS_DS2_en_csv_v2_5996644.csv",   
     "API_BN.CAB.XOKA.CD_DS2_en_csv_v2_5873206.csv",
     "API_NE.GDI.TOTL.ZS_DS2_en_csv_v2_5873774.csv",
     "API_FM.LBL.BMNY.GD.ZS_DS2_en_csv_v2_5873493.csv",
