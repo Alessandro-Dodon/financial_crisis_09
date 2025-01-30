@@ -16,7 +16,7 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 **`Part2W.qmd`** Applies PCA and clustering techniques across various countries. Can be rendered to a pdf file containing the full explanation.
 
-**`Part2W.pdf`** Summarizes the results and visualizations from the world economy analysis with a brief explanation.
+**`Part2W.pdf`** The rendered pdf, which summarizes the results and visualizations from the world economy.
 
 **`Unzipped_data`** Folder containing all datasets (already unzipped) from the World Bank used in the analysis. 
 
