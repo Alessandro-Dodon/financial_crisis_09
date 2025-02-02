@@ -16,13 +16,19 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 **`Part2W.qmd`** Applies PCA and clustering techniques across various countries. Can be rendered to a pdf file containing the full explanation.
 
-**`Part2W.pdf`** Summarizes the results and visualizations from the world economy analysis with a brief explanation.
+**`Part2W.pdf`** The rendered pdf, which summarizes the results and visualizations from the world economy.
 
 **`Unzipped_data`** Folder containing all datasets (already unzipped) from the World Bank used in the analysis. 
 
+## Results Example
+
+Below is a visualization of the "Global" Business Cycle, which indicates 2009 as the most destructive year of the crisis. For further details and insights, please refer to the presentation slides.
+
+![Business Cycle](BusinessCycle.png)
+
 ## User Guide
 
-Ensure R and Quarto are installed. The .qmd file can be rendered to HTML, and the .R file runs automatically by pressing "Run" sequentially in RStudio. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
+Ensure R and Quarto are installed. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
 
-If any required packages are missing, simply remove the # at the start of the install.packages() lines in the scripts to install them. Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
+Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
 
