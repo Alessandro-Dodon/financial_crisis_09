@@ -22,7 +22,7 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 ## Results Example
 
-Below is a visualization of the "Global" Business Cycle, which indicates 2009 as the most destructive year of the crisis. For further details and insights, please refer to the presentation slides.
+Below is a visualization of the "Global" Business Cycle, which indicates 2009 as the most destructive year of the crisis. For further details and insights, please refer to the report pdf.
 
 ![Business Cycle](BusinessCycle.png)
 
