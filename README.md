@@ -20,6 +20,12 @@ In this section, the analysis extends to the world economy, using basic machine 
 
 **`Unzipped_data`** Folder containing all datasets (already unzipped) from the World Bank used in the analysis. 
 
+## Results Example
+
+Below is a visualization of the "Global" Business Cycle, which indicates 2009 as the most destructive year of the crisis. For further details and insights, please refer to the presentation slides.
+
+![Business Cycle](BusinessCycle.png)
+
 ## User Guide
 
 Ensure R and Quarto are installed. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
