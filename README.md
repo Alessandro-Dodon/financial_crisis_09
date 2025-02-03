@@ -32,3 +32,6 @@ Ensure R and Quarto are installed. Data must be downloaded from the repository a
 
 Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
 
+## Contacts
+For any clarifications, questions, or to report issues with the code, feel free to reach out via email at alessandro.dodon@usi.ch. You can also find my LinkedIn link in my GitHub bio.
+
