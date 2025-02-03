@@ -32,6 +32,8 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
    - Ensure R and Quarto are installed.
    - Download the data from the repository and place it in the `Unzipped_data` folder within the same directory as the script (a relative path is used).
    - The dataset is also available at [World Bank Databank](https://databank.worldbank.org/home).
+   - Quarto requires additional dependencies such as Pandoc and LaTeX (for PDF rendering). Ensure these are installed if needed.
+
 
 2. **Execution**:
    - Run the `.qmd` files using Quarto to generate the output, or alternatively render the `.qmd` files directly.
