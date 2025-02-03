@@ -1,14 +1,14 @@
 # Financial Crisis Analysis
 
-This project explores the economic impact of the financial crisis on both the U.S. economy and the world economy. The analysis is split into two parts, each using different methodologies to assess the effects of financial crises. Data came from the World Bank economic indicators.
+This project explores the economic impact of the financial crisis on both the U.S. economy and the world economy. The analysis is split into two parts, each using different methodologies to assess the effects of the crisis. Data came from the World Bank economic indicators.
 
 ## Part 1: U.S. Economy Impact (Part1US)
 
-In this section, I analyze the economic impact of financial crises on the United States. The analysis includes web scraping, interactive visualizations and tables for extensive descriptive statistics and correlation matrix to analyze the relationship between macroeconomic indicators.
+In this section, I analyze the economic impact of the crisis on the United States. The analysis includes web scraping, interactive visualizations and tables for extensive descriptive statistics and correlation matrix to analyze the relationship between macroeconomic indicators.
 
 ## Part 2: World Economy Impact (Part2W)
 
-In this section, the analysis extends to the world economy, using basic machine learning techniques (PCA and clustering methods) to explore patterns and groupings in how different countries are affected by financial crises. The final output is a comprehensive report.
+In this section, the analysis extends to the world economy, using basic machine learning techniques (PCA and clustering methods) to explore patterns and groupings in how different countries are affected by the financial crisis. The final output is a comprehensive report.
 
 ## Files
 
