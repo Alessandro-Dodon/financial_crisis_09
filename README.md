@@ -34,8 +34,9 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
    - The dataset is also available at [World Bank Databank](https://databank.worldbank.org/home).
 
 2. **Execution**:
-   - Run the `.qmd` files using Quarto to generate the output.
-   - The `chromote` package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or another Chromium-based browser (and internet connection).
+   - Run the `.qmd` files using Quarto to generate the output, or alternatively render the `.qmd` files directly.
+   - The `chromote` package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or another Chromium-based browser.
+   - Note that **internet connection** is required for web scraping.
 
 3. **Packages**:
    - All required packages are loaded at the beginning of the `.qmd` files as a list for easy reference.
