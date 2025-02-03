@@ -32,12 +32,12 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
    - Ensure R and Quarto are installed.
    - Download the data from the repository and place it in the `Unzipped_data` folder within the same directory as the script (a relative path is used).
    - The dataset is also available at [World Bank Databank](https://databank.worldbank.org/home).
-   - Quarto requires additional dependencies such as Pandoc and LaTeX (for PDF) and a web browser (for HTML rendering). Ensure these are installed if needed by running the following in the R console:
+      - Quarto requires additional dependencies such as Pandoc and LaTeX (for PDF) and a web browser (for HTML rendering). Ensure these are installed if needed by running the following in the R console:
      ```r
      install.packages("tinytex")  # Install the TinyTeX package
      tinytex::install_tinytex()    # Install TinyTeX (LaTeX distribution)
      ```
-   - Quarto **already includes Pandoc**, so no separate installation is required.
+     Quarto **already includes Pandoc**, so no separate installation is required.
 
 
 2. **Execution**:
