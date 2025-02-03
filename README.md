@@ -1,6 +1,6 @@
 # Financial Crisis Analysis  
 
-This project, completed during my Bachelor's in Economics at the University of Bologna, explores the economic impact of the financial crisis on both the U.S. economy and the world economy. The analysis is split into two parts, each using different methodologies to assess the effects of the crisis. Data came from the World Bank economic indicators.  
+This university project, completed during my Bachelor's in Economics at the University of Bologna, explores the economic impact of the financial crisis on both the U.S. economy and the world economy. The analysis is split into two parts, each using different methodologies to assess the effects of the crisis. Data came from the World Bank economic indicators.  
 
 ## Part 1: U.S. Economy Impact (Part1US)
 
