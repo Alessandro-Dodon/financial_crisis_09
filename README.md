@@ -28,9 +28,21 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
 
 ## User Guide
 
-Ensure R and Quarto are installed. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it uses a relative path). It is also available at https://databank.worldbank.org/home.
+1. **Setup**:
+   - Ensure R and Quarto are installed.
+   - Download the data from the repository and place it in the `Unzipped_data` folder within the same directory as the script (a relative path is used).
+   - The dataset is also available at [World Bank Databank](https://databank.worldbank.org/home).
 
-Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
+2. **Execution**:
+   - Run the `.qmd` files using Quarto to generate the output.
+   - The `chromote` package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or another Chromium-based browser (and internet connection).
+
+3. **Packages**:
+   - All required packages are loaded at the beginning of the `.qmd` files as a list for easy reference.
+   - If any packages are missing, install them by running the following command in the R console or terminal:
+     ```r
+     install.packages("package_name")
+     ```
 
 ## Contacts
 For any clarifications, questions, or to report issues with the code, feel free to reach out via email at alessandro.dodon@usi.ch. You can also find my LinkedIn link in my GitHub bio.
