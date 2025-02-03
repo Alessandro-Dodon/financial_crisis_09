@@ -28,7 +28,7 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
 
 ## User Guide
 
-Ensure R and Quarto are installed. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it used a relative path). It is also available at https://databank.worldbank.org/home.
+Ensure R and Quarto are installed. Data must be downloaded from the repository and kept in the `Unzipped_data` folder in the same directory as the script (it uses a relative path). It is also available at https://databank.worldbank.org/home.
 
 Note that the chromote package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or other Chromium-based browsers.
 
