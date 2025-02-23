@@ -37,7 +37,7 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
    - Download as ZIP (Alternative):  
      Click the **"Code"** button (green) at the top of the repository page, select **"Download ZIP"**, extract the files, and place them in your working directory.  
    - Make sure the data is in the same working directory as the scripts (a relative path is used).  
-   - The dataset is also available at [World Bank Databank](https://databank.worldbank.org/home).
+   - The data is also available at [World Bank Databank](https://databank.worldbank.org/home).
    - Ensure R and Quarto are installed.  
    - Quarto requires additional dependencies such as Pandoc and LaTeX (for PDF) and a web browser (for HTML rendering). Ensure these are installed if needed by running the following in the R console:  
      ```r
