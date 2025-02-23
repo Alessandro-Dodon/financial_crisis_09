@@ -28,17 +28,24 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
 
 ## User Guide
 
-1. **Setup**:
-   - Ensure R and Quarto are installed.
-   - Download the data from the repository and place it in the `Unzipped_data` folder within the same directory as the script (a relative path is used).
+1. **Setup**:  
+   - Clone the repository (Recommended):  
+     ```bash
+     git clone https://github.com/Alessandro-Dodon/Repo-Name.git
+     cd Repo-Name
+     ```
+   - Download as ZIP (Alternative):  
+     Click the **"Code"** button (green) at the top of the repository page, select **"Download ZIP"**, extract the files, and place them in your working directory.  
+   - Make sure the data is in the same working directory as the scripts (a relative path is used).  
    - The dataset is also available at [World Bank Databank](https://databank.worldbank.org/home).
-   - Quarto requires additional dependencies such as Pandoc and LaTeX (for PDF) and a web browser (for HTML rendering). Ensure these are installed if needed by running the following in the R console:
+   - Ensure R and Quarto are installed.  
+   - Quarto requires additional dependencies such as Pandoc and LaTeX (for PDF) and a web browser (for HTML rendering). Ensure these are installed if needed by running the following in the R console:  
      ```r
      install.packages("tinytex")  # Install the TinyTeX package
      tinytex::install_tinytex()    # Install TinyTeX (LaTeX distribution)
      ```
      Quarto **already includes Pandoc**, so no separate installation is required.
-
+     
 2. **Execution**:
    - Run the `.qmd` files using Quarto to generate the output, or alternatively render the `.qmd` files directly.
    - The `chromote` package requires a compatible browser that supports the Chrome DevTools Protocol (CDP), such as Google Chrome or another Chromium-based browser.
