@@ -68,7 +68,7 @@ suppressWarnings(suppressMessages({
 }))
 
 # Set relative path to the data folder
-file_path <- "./Unzipped_data/"
+file_path <- "./unzipped_data/"
 
 # Reading the CSV files with the relative path
 suppressWarnings(suppressMessages({
