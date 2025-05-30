@@ -58,6 +58,6 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
      install.packages("package_name")
      ```
 
-## Contacts
+## Contact
 For any clarifications, questions, or to report issues with the code, feel free to reach out via email at alessandro.dodon@usi.ch. You can also find my LinkedIn link in my GitHub bio.
 
