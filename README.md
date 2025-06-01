@@ -31,8 +31,8 @@ Below is a visualization of the "Global" Business Cycle, which indicates 2009 as
 1. **Setup**:  
    - Clone the repository (Recommended):  
      ```bash
-     git clone https://github.com/Alessandro-Dodon/FinancialCrisis09.git
-     cd FinancialCrisis09
+     git clone https://github.com/Alessandro-Dodon/financial_crisis_09 
+     cd financial_crisis_09
      ```
    - Download as ZIP (Alternative):  
      Click the **"Code"** button (green) at the top of the repository page, select **"Download ZIP"**, extract the files, and place them in your working directory.  
